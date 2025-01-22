@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router";
+import { useLoadingStore } from "../store/loadingStore";
 
 // const checkAuth = async () => {
 //     try {
@@ -18,23 +19,29 @@ import { Navigate, Outlet } from "react-router";
 
 export function SiteLayout() {
     const [isAuth, setIsAuth] = useState<boolean | null>(true);
-    const [loading, setLoading] = useState(false);
+    // const { isLoading, hideLoading, showLoading } = useLoadingStore()
 
-    // useEffect(() => {
-    //     const verifyUser = async () => {
-    //         const authenticated = await checkAuth();
-    //         setIsAuth(authenticated);
-    //         setLoading(false);
-    //     };
-    //     verifyUser();
-    // }, []);
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-            </div>
-        );
-    }
+    useEffect(() => {
+        const verifyUser = async () => {
+            // showLoading()
+            // await new Promise((resolve) => setTimeout(resolve, 3000));
+            // hideLoading()
+            // const authenticated = await checkAuth();
+            // setIsAuth(authenticated);
+            // setLoading(false);
+        };
+        verifyUser();
+    }, []);
+    // if (isLoading) {
+    //     return (
+    //         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    //             <div className="p-6 bg-white rounded-lg shadow-lg flex flex-col items-center">
+    //                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+    //                 <p className="mt-4 text-gray-700 text-lg font-semibold">Carregando...</p>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
     if (!isAuth) {
         return <Navigate to="/login" replace />;
@@ -43,6 +50,7 @@ export function SiteLayout() {
     return (
         <div>
             <p className="bg-red-500">Site Layout</p>
+
             <Outlet />
         </div>
     )

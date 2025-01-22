@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router"
 import { Home } from "./pages/Home"
 import { SiteLayout } from "./layouts/SiteLayout"
+import { ProtectedRoute } from "./layouts/ProtectedRoute"
 import { Events } from "./pages/Events"
 import { Login } from "./pages/auth/Login"
 import { EventDetails } from "./pages/EventDetails"
@@ -30,12 +31,14 @@ function App() {
       </Route>
 
       {/* Super Admin Routes */}
-      <Route path="admin" element={<AdminLayout />}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="events" element={<EventIndex />} />
-        <Route path="events/create" element={<EventCreate />} />
-        <Route path="reports" element={<Reports />} />
-        <Route path="profile" element={<Profile />} />
+      <Route path="admin" element={<ProtectedRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="events" element={<EventIndex />} />
+          <Route path="events/create" element={<EventCreate />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
       </Route>
 
       {/* Event Admin Routes */}
