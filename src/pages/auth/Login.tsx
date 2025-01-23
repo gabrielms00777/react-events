@@ -5,6 +5,7 @@ import { errorStore } from "../../store/errorStore"
 // import { handleLoginRequest } from "../../services/authService"
 import { useNavigate } from "react-router"
 import { userStore } from "../../store/userStore"
+import { Button } from "@/components/ui/button"
 
 export function Login() {
     const navigate = useNavigate()
@@ -40,7 +41,7 @@ export function Login() {
             //     navigate('/admin')
             // }
         } catch (errors: unknown) {
-            setErrors(errors as Record<string, string[]>);
+            setErrors(errors.response.data.errors as Record<string, string[]>);
         } finally {
             hideLoading()
         }
@@ -53,8 +54,8 @@ export function Login() {
 
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Login</h2>
+        <div className="max-w-md p-6 mx-auto mt-10 bg-white rounded-lg shadow-md">
+            <h2 className="mb-4 text-2xl font-bold">Login</h2>
             <form onSubmit={handleSubmit}>
                 <input
                     type="email"
@@ -70,9 +71,9 @@ export function Login() {
                     className="w-full p-2 mb-4 border border-gray-300 rounded"
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
-                <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">Entrar</button>
+                <Button className="w-full">Entrar</Button>
             </form>
-            <button onClick={getUser} className="w-full bg-blue-500 text-white py-2 rounded mt-4">Get User</button>
+            <button onClick={getUser} className="w-full py-2 mt-4 text-white bg-blue-500 rounded">Get User</button>
         </div>
     )
 }

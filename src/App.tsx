@@ -18,6 +18,7 @@ import { StaffCreate } from "./pages/event/admin/staff/Create"
 import { VisitorList } from "./pages/event/admin/visitors/Index"
 import { VisitorCreate } from "./pages/event/admin/visitors/Create"
 import { CheckIn } from "./pages/staff/checkIn"
+import { EventAdminLogin } from "./pages/event/admin/Login"
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
       {/* Event Admin Routes */}
       <Route path="event/:uuid" element={<EventAdminLayout />}>
         <Route index element={<EventDashboard />} />
+        <Route path="login" element={<EventAdminLogin />} />
         <Route path="staff" element={<StaffList />} />
         <Route path="staff/create" element={<StaffCreate />} />
         <Route path="visitors" element={<VisitorList />} />

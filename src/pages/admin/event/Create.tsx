@@ -1,10 +1,21 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
-import { z } from "zod";
-import { api } from "../../../lib/axios";
-import { loadingStore } from "../../../store/loadingStore";
-// import { errorStore } from "../../../store/errorStore";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { useNavigate } from "react-router"
+
+import { Button } from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { api } from "@/lib/axios"
+import { loadingStore } from "@/store/loadingStore"
 
 const eventSchema = z.object({
     name: z
@@ -26,182 +37,190 @@ const eventSchema = z.object({
             .string()
             .min(1, "O nome do organizador é obrigatório.")
             .max(225, "O nome do organizador deve ter no máximo 225 caracteres."),
-        email: z
-            .string()
-            .email("Informe um email válido.")
-            .min(1, "O email do organizador é obrigatório."),
+        email: z.string().email("Informe um email válido."),
     }),
-});
+})
 
-type EventFormData = z.infer<typeof eventSchema>;
+type EventFormData = z.infer<typeof eventSchema>
+
 export function EventCreate() {
     const navigate = useNavigate()
     const { showLoading, hideLoading } = loadingStore()
-        // const setErrors = errorStore((state) => state.setErrors)
-    const { register, handleSubmit, formState: { errors } } = useForm<EventFormData>({ resolver: zodResolver(eventSchema) });
+
+    const form = useForm<EventFormData>({
+        resolver: zodResolver(eventSchema),
+        defaultValues: {
+            name: "Evento Teste",
+            description: "Desc Teste",
+            location: "Local Teste",
+            max_participants: 100,
+            start_date: "2025-01-26",
+            end_date: "2025-01-28",
+            owner: {
+                name: "Teste",
+                email: "coiso@coiso.com",
+            },
+        },
+    })
 
     const onSubmit = async (data: EventFormData) => {
         showLoading()
-        console.log(data)
         try {
-            await api.get('/sanctum/csrf-cookie')
-            const response = await api.post('/api/admin/events', data)
+            const response = await api.post("/api/admin/events", data)
             console.log(response)
-        } catch (errors) {
-            console.log(errors)
-            // setErrors(errors.response.data as Record<string, string[]>);
-        }finally{
+            navigate("/admin/events")
+        } catch (error) {
+            console.error(error.response?.data?.errors || "Erro desconhecido")
+        } finally {
             hideLoading()
         }
     }
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold mb-6">Criar Evento</h1>
-                <button
-                    onClick={() => navigate(-1)}
-                    className="mb-4 text-blue-500 hover:underline"
-                >
-                    ← Voltar
-                </button>
-            </div>
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="bg-white shadow rounded p-6 space-y-4"
-            >
-                {/* Nome do Evento */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Nome do Evento
-                    </label>
-                    <input
-                        type="text"
-                        {...register("name")}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {errors.name && (
-                        <p className="text-red-500 text-sm">{errors.name.message}</p>
-                    )}
-                </div>
+        <div className="max-w-2xl p-8 mx-auto bg-white rounded-lg shadow-md">
+            <h1 className="mb-6 text-2xl font-bold">Criar Novo Evento</h1>
 
-                {/* Descrição */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Descrição
-                    </label>
-                    <textarea
-                        {...register("description")}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {errors.description && (
-                        <p className="text-red-500 text-sm">{errors.description.message}</p>
-                    )}
-                </div>
-
-                {/* Localização */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Localização
-                    </label>
-                    <input
-                        type="text"
-                        {...register("location")}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {errors.location && (
-                        <p className="text-red-500 text-sm">{errors.location.message}</p>
-                    )}
-                </div>
-
-                {/* Número Máximo de Participantes */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Número Máximo de Participantes
-                    </label>
-                    <input
-                        type="number"
-                        {...register("max_participants", { valueAsNumber: true })}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {errors.max_participants && (
-                        <p className="text-red-500 text-sm">
-                            {errors.max_participants.message}
-                        </p>
-                    )}
-                </div>
-
-                {/* Datas */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Data de Início
-                    </label>
-                    <input
-                        type="date"
-                        {...register("start_date")}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {errors.start_date && (
-                        <p className="text-red-500 text-sm">{errors.start_date.message}</p>
-                    )}
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Data de Término
-                    </label>
-                    <input
-                        type="date"
-                        {...register("end_date")}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {errors.end_date && (
-                        <p className="text-red-500 text-sm">{errors.end_date.message}</p>
-                    )}
-                </div>
-
-                {/* Organizador */}
-                <fieldset className="border border-gray-300 rounded-md p-4">
-                    <legend className="text-sm font-medium text-gray-700">
-                        Informações do Organizador
-                    </legend>
-                    <div className="mt-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                            Nome
-                        </label>
-                        <input
-                            type="text"
-                            {...register("owner.name")}
-                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Nome do Evento</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Digite o nome do evento" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
-                        {errors.owner?.name && (
-                            <p className="text-red-500 text-sm">{errors.owner.name.message}</p>
-                        )}
-                    </div>
-                    <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            {...register("owner.email")}
-                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        />
-                        {errors.owner?.email && (
-                            <p className="text-red-500 text-sm">
-                                {errors.owner.email.message}
-                            </p>
-                        )}
-                    </div>
-                </fieldset>
 
-                {/* Botão de Enviar */}
-                <button
-                    type="submit"
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                >
-                    Criar Evento
-                </button>
-            </form>
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Descrição</FormLabel>
+                                    <FormControl>
+                                        <Textarea placeholder="Descreva o evento" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="location"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Localização</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Digite a localização" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="max_participants"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Número Máximo de Participantes</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="number"
+                                            placeholder="Digite o número máximo"
+                                            {...field}
+                                            onChange={(e) =>
+                                                form.setValue("max_participants", Number(e.target.value))
+                                            }
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+
+                        <FormField
+                            control={form.control}
+                            name="start_date"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Data de Início</FormLabel>
+                                    <FormControl>
+                                        <Input type="date" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="end_date"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Data de Término</FormLabel>
+                                    <FormControl>
+                                        <Input type="date" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div className="p-4 bg-gray-100 rounded-md">
+                        <h2 className="mb-2 text-lg font-semibold">Informações do Dono</h2>
+                        <div className="grid gap-4 md:grid-cols-2">
+
+                            <FormField
+                                control={form.control}
+                                name="owner.name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Nome do Organizador</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Digite o nome do organizador" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="owner.email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email do Organizador</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="email"
+                                                placeholder="Digite o email do organizador"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+
+
+                    <Button type="submit" className="w-full">
+                        Criar Evento
+                    </Button>
+                </form>
+            </Form>
         </div>
     )
 }
