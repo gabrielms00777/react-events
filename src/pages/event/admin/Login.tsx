@@ -26,7 +26,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 export function EventAdminLogin() {
     const { showLoading, hideLoading } = loadingStore()
     const setErrors = errorStore((state) => state.setErrors)
-    const { uuid } = useParams<{ uuid: string }>()
+    const { id } = useParams<{ id: string }>()
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
     })
@@ -42,7 +42,7 @@ export function EventAdminLogin() {
     const onSubmit = async (data: LoginFormData) => {
         showLoading()
         try {
-            const response = await api.post("/api/event/login", { ...data, event_id: uuid })
+            const response = await api.post("/api/event/login", { ...data, event_id: id })
             console.log(response)
         } catch (errors: any) {
             setErrors(errors.response.data.errors as Record<string, string[]>);

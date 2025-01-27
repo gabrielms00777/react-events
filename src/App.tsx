@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router"
 import { Home } from "./pages/Home"
 import { SiteLayout } from "./layouts/SiteLayout"
-import { ProtectedRoute } from "./layouts/ProtectedRoute"
+import { ProtectedAdminRoute } from "./layouts/ProtectedAdminRoute"
 import { Events } from "./pages/Events"
 import { Login } from "./pages/auth/Login"
 import { EventDetails } from "./pages/EventDetails"
@@ -18,7 +18,8 @@ import { StaffCreate } from "./pages/event/admin/staff/Create"
 import { VisitorList } from "./pages/event/admin/visitors/Index"
 import { VisitorCreate } from "./pages/event/admin/visitors/Create"
 import { CheckIn } from "./pages/staff/checkIn"
-import { EventAdminLogin } from "./pages/event/admin/Login"
+import { EventDetail } from "./pages/event/admin/EventDetail"
+import { ProtectedOwnerRoute } from "./layouts/ProtectedOwnerRoute"
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
       </Route>
 
       {/* Super Admin Routes */}
-      <Route path="admin" element={<ProtectedRoute />}>
+      <Route path="admin" element={<ProtectedAdminRoute />}>
         <Route element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="events" element={<EventIndex />} />
@@ -43,14 +44,16 @@ function App() {
       </Route>
 
       {/* Event Admin Routes */}
-      <Route path="event/:uuid" element={<EventAdminLayout />}>
-        <Route index element={<EventDashboard />} />
-        <Route path="login" element={<EventAdminLogin />} />
-        <Route path="staff" element={<StaffList />} />
-        <Route path="staff/create" element={<StaffCreate />} />
-        <Route path="visitors" element={<VisitorList />} />
-        <Route path="visitors/create" element={<VisitorCreate />} />
-        <Route path="profile" element={<Profile />} />
+      <Route path="dashboard" element={<ProtectedOwnerRoute />}>
+        <Route element={<EventAdminLayout />}>
+          <Route index element={<EventDashboard />} />
+          <Route path="event" element={<EventDetail />} />
+          <Route path="staff" element={<StaffList />} />
+          <Route path="staff/create" element={<StaffCreate />} />
+          <Route path="visitors" element={<VisitorList />} />
+          <Route path="visitors/create" element={<VisitorCreate />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
       </Route>
 
       {/* Staff Routes */}

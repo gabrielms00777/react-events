@@ -11,12 +11,12 @@ export function Login() {
     const navigate = useNavigate()
     const { showLoading, hideLoading } = loadingStore()
     const setErrors = errorStore((state) => state.setErrors)
-    const { user, setUser } = userStore()
+    const setUser = userStore((state) => state.setUser)
     // const { setToken, setUser } = userStore()
 
     const [formData, setFormData] = useState({
-        email: 'admin@admin',
-        password: 'admin'
+        email: 'beer.candace@example.org',
+        password: 'password'
     })
 
     const handleSubmit = async (e: FormEvent) => {
@@ -25,31 +25,23 @@ export function Login() {
         try {
             // const success = await handleLoginRequest(formData)
             await api.get('/sanctum/csrf-cookie')
-            await api.post('/login', formData)
-            const response = await api.get('/api/user')
-            console.log(response)
+            const response = await api.post('/login', formData)
 
             if (response.data) {
-                // console.log(response.data)
-                setUser(response.data)
-                console.log(user)
-                navigate('/admin')
+                setUser(response.data.data)
+                if (response.data.data.role === 'admin') {
+                    return navigate('/admin')
+                } else if (response.data.data.role === 'event_owner') {
+                    return navigate('/dashboard')
+                }
                 return
             }
 
-            // if (success) {
-            //     navigate('/admin')
-            // }
-        } catch (errors: unknown) {
+        } catch (errors: any) {
             setErrors(errors.response.data.errors as Record<string, string[]>);
         } finally {
             hideLoading()
         }
-    }
-
-    const getUser = async () => {
-        const res = await api.get('/api/user')
-        console.log(res)
     }
 
 
@@ -73,7 +65,6 @@ export function Login() {
                 />
                 <Button className="w-full">Entrar</Button>
             </form>
-            <button onClick={getUser} className="w-full py-2 mt-4 text-white bg-blue-500 rounded">Get User</button>
         </div>
     )
 }

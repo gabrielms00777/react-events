@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 const fetchEvents = async (): Promise<Event[]> => {
     const response = await api.get('/api/admin/events')
-    console.log(response.data.data)
+    // console.log(response.data.data)
     return response.data.data || []
 }
 

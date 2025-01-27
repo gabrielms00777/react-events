@@ -5,6 +5,7 @@ import App from './App.tsx'
 import { BrowserRouter } from 'react-router'
 import { LoadingOverlay } from './components/LoadingOverlay.tsx'
 import { ErrorAlert } from './components/ErrorAlert.tsx'
+import { Toaster } from "@/components/ui/sonner"
 
 import {
   QueryClient,
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')!).render(
         <LoadingOverlay />
         <ErrorAlert />
         <App />
+        <Toaster />
       </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>,

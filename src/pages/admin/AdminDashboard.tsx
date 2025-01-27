@@ -1,10 +1,9 @@
 import { userStore } from "../../store/userStore"
 
 export function AdminDashboard() {
-    const { user } = userStore()
-    console.log(user)
-    return (
-        <div>
+  const { user } = userStore()
+  return (
+    <div>
       <h1 className="text-3xl font-bold">Bem-vindo ao Painel - {user?.name}</h1>
       <div className="grid grid-cols-3 gap-6 mt-6">
         <div className="bg-white p-4 shadow rounded">
@@ -21,5 +20,5 @@ export function AdminDashboard() {
         </div>
       </div>
     </div>
-    )
+  )
 }

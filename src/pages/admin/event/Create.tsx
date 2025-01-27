@@ -16,32 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { api } from "@/lib/axios"
 import { loadingStore } from "@/store/loadingStore"
-
-const eventSchema = z.object({
-    name: z
-        .string()
-        .min(1, "O nome do evento é obrigatório.")
-        .max(225, "O nome do evento deve ter no máximo 225 caracteres."),
-    description: z
-        .string()
-        .min(1, "A descrição do evento é obrigatória.")
-        .max(225, "A descrição do evento deve ter no máximo 225 caracteres."),
-    location: z.string().min(1, "A localização é obrigatória."),
-    max_participants: z
-        .number()
-        .min(1, "O número máximo de participantes deve ser maior que 0."),
-    start_date: z.string().min(1, "A data de início é obrigatória."),
-    end_date: z.string().min(1, "A data de término é obrigatória."),
-    owner: z.object({
-        name: z
-            .string()
-            .min(1, "O nome do organizador é obrigatório.")
-            .max(225, "O nome do organizador deve ter no máximo 225 caracteres."),
-        email: z.string().email("Informe um email válido."),
-    }),
-})
-
-type EventFormData = z.infer<typeof eventSchema>
+import { EventFormData, eventSchema } from "@/schemas/eventSchema"
 
 export function EventCreate() {
     const navigate = useNavigate()
@@ -54,7 +29,7 @@ export function EventCreate() {
             description: "Desc Teste",
             location: "Local Teste",
             max_participants: 100,
-            start_date: "2025-01-26",
+            start_date: "2025-01-28",
             end_date: "2025-01-28",
             owner: {
                 name: "Teste",
@@ -67,9 +42,8 @@ export function EventCreate() {
         showLoading()
         try {
             const response = await api.post("/api/admin/events", data)
-            console.log(response)
             navigate("/admin/events")
-        } catch (error) {
+        } catch (error: any) {
             console.error(error.response?.data?.errors || "Erro desconhecido")
         } finally {
             hideLoading()
