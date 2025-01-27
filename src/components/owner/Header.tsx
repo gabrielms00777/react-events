@@ -1,41 +1,49 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useEvents } from "@/services/owner/queries";
+import { userStore } from "@/store/userStore";
+import { eventStore } from "@/store/eventStore";
+import { api } from "@/lib/axios";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Header: FC = () => {
-    const [selectedEvent, setSelectedEvent] = useState("");
+    const { selectedEvent, setSelectedEvent } = eventStore()
+    const user = userStore((state) => state.user)
+    const { data: events, isLoading } = useEvents()
 
-    const events = [
-        { id: "1", name: "Evento Corporativo 2024" },
-        { id: "2", name: "Tech Conference" },
-    ];
-
-    const handleEventChange = (eventId: string) => {
+    const handleEventChange = async (eventId: string) => {
+        if (eventId === selectedEvent) return
+        await api.post('/api/dashboard/select-event', { event_id: eventId })
         setSelectedEvent(eventId);
         console.log(`Evento selecionado: ${eventId}`);
-        // Aqui você pode chamar uma API para carregar os dados do evento selecionado
     };
 
     return (
         <header className="flex justify-between items-center bg-white shadow-md p-4">
             <div>
-                <h1 className="text-xl font-semibold">Bem-vindo, João</h1>
+                <h1 className="text-xl font-semibold">Bem-vindo, {user?.name}</h1>
             </div>
 
             <div className="flex items-center gap-4">
-                <Select value={selectedEvent} onValueChange={handleEventChange}>
-                    <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Selecione um evento" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {events.map((event) => (
-                            <SelectItem key={event.id} value={event.id}>
-                                {event.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                {isLoading ? (
+                    <span>Carregando...</span>
+                ) : (
+                    <Select value={selectedEvent} onValueChange={handleEventChange}>
+                        <SelectTrigger className="w-[200px]">
+                            <SelectValue>
+                                {events?.find((event) => event.id === selectedEvent)?.name || "Selecione um evento"}
+                            </SelectValue>
+                        </SelectTrigger>
 
+                        <SelectContent>
+                            {events?.map((event) => (
+                                <SelectItem key={event.id} value={event.id} disabled={event.id === selectedEvent}>
+                                    {event.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                )}
                 {/* User Avatar */}
                 {/* <Avatar>
                     <AvatarImage src="https://placehold.co/150" alt="User" />

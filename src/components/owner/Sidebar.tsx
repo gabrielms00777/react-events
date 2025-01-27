@@ -1,10 +1,13 @@
 import { FC } from "react";
-import { Link } from "react-router";
+import { Link, Navigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
+import { userStore } from "@/store/userStore";
+import { api } from "@/lib/axios";
 
 export const Sidebar: FC = () => {
+    const clearUser = userStore((state) => state.clearUser)
     const navLinks = [
         { name: "Dashboard", path: "/dashboard" },
         { name: "Evento", path: "/dashboard/event" },
@@ -12,10 +15,16 @@ export const Sidebar: FC = () => {
         { name: "Visitantes", path: "/dashboard/visitors" },
     ];
 
+    const handleLogout = async () => {
+        clearUser()
+        await api.post('/logout')
+        return <Navigate to="/login" replace />
+    }
+
     return (
         <>
-        {/* Sidebar (Desktop) */}
-        <aside className="hidden md:flex flex-col w-64 bg-blue-600 text-white p-6 space-y-6">
+            {/* Sidebar (Desktop) */}
+            <aside className="hidden md:flex flex-col w-64 bg-blue-600 text-white p-6 space-y-6">
                 <h2 className="text-2xl font-bold">Admin Evento</h2>
                 <nav>
                     <ul className="space-y-4">
@@ -26,6 +35,16 @@ export const Sidebar: FC = () => {
                                 </Link>
                             </li>
                         ))}
+                        <li>
+                            <Button
+                                onClick={() => handleLogout()}
+                                variant={"link"}
+                                className="hover:text-blue-300 text-lg"
+                            >
+                                <LogOut />
+                                <span>Sair</span>
+                            </Button>
+                        </li>
                     </ul>
                 </nav>
             </aside>
