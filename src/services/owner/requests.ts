@@ -8,3 +8,7 @@ export const getOnwerEvents = async (): Promise<Pick<Event, 'id' | 'name'>[]> =>
 export const getEventDetails = async (eventId: string) => {
     return (await api.get(`/api/events/${eventId}`)).data.data;
 };
+
+export const getStaff = async () => {
+    return (await api.get(`/api/dashboard/staff`)).data.data;
+};

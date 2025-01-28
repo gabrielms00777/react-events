@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEvents } from "@/services/owner/queries";
 import { userStore } from "@/store/userStore";
@@ -9,6 +9,12 @@ export const Header: FC = () => {
     const { selectedEvent, setSelectedEvent } = eventStore()
     const user = userStore((state) => state.user)
     const { data: events, isLoading, refetch } = useEvents()
+
+    useEffect(() => {
+        if (!selectedEvent && events && events.length > 0) {
+            setSelectedEvent(events[0].id);
+        }
+    }, [events, selectedEvent]);
 
     const handleEventChange = async (eventId: string) => {
         if (eventId === selectedEvent) return

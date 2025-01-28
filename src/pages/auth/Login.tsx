@@ -15,7 +15,7 @@ export function Login() {
     // const { setToken, setUser } = userStore()
 
     const [formData, setFormData] = useState({
-        email: 'beer.candace@example.org',
+        email: 'grimes.giles@example.com',
         password: 'password'
     })
 

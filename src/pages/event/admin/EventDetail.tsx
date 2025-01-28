@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { useEventDetails } from "@/services/owner/queries";
 import { eventStore } from "@/store/eventStore";
 
-// Schema de validação com Zod
 const eventSchema = z.object({
     name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres."),
     date: z.string().nonempty("A data é obrigatória."),
@@ -43,30 +42,6 @@ export function EventDetail() {
             setValue("image", eventDetails.image);
         }
     }, [eventDetails, setValue]);
-
-    // useEffect(() => {
-    //     const fetchEvent = async () => {
-    //         // Simulação de dados vindos da API
-    //         const eventData = {
-    //             name: "Tech Conference 2024",
-    //             date: "2025-06-15",
-    //             location: "Centro de Convenções SP",
-    //             description: "Um evento sobre tecnologia e inovação.",
-    //             image: "https://via.placeholder.com/600x300",
-    //         };
-
-    //         // Preenchendo os campos do formulário
-    //         setValue("name", eventData.name);
-    //         setValue("date", eventData.date);
-    //         setValue("location", eventData.location);
-    //         setValue("description", eventData.description);
-    //         setValue("image", eventData.image);
-    //     };
-
-    //     fetchEvent();
-    // }, [setValue]);
-
-    // Simulação de envio para API
     const mutation = useMutation({
         mutationFn: async (data: EventFormData) => {
             // Simulação de envio para o backend

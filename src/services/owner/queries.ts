@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getEventDetails, getOnwerEvents } from "./requests";
+import { getEventDetails, getOnwerEvents, getStaff } from "./requests";
 
 export function useEvents() {
     return useQuery({
@@ -14,4 +14,11 @@ export function useEventDetails(eventId?: string) {
         queryFn: () => getEventDetails(eventId!),
         enabled: !!eventId, // Só faz a query se um evento estiver selecionado
     });
+}
+
+export function useStaffs() {
+    return useQuery({
+        queryKey: ["owner.staff"],
+        queryFn: getStaff
+    })
 }

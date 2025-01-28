@@ -9,21 +9,22 @@ import { Loader2, Pencil, Trash } from "lucide-react";
 import { Select } from "@radix-ui/react-select";
 import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "react-router";
+import { useStaffs } from "@/services/owner/queries";
 
 // Simulação de API
-const fetchEmployees = async () => {
-    return new Promise((resolve) =>
-        setTimeout(
-            () =>
-                resolve([
-                    { id: 1, name: "João Silva", role: "Segurança", email: "joao@email.com" },
-                    { id: 2, name: "Maria Souza", role: "Recepcionista", email: "maria@email.com" },
-                    { id: 3, name: "Carlos Pereira", role: "Técnico", email: "carlos@email.com" },
-                ]),
-            1000
-        )
-    );
-};
+// const fetchstaffs = async () => {
+//     return new Promise((resolve) =>
+//         setTimeout(
+//             () =>
+//                 resolve([
+//                     { id: 1, name: "João Silva", role: "Segurança", email: "joao@email.com" },
+//                     { id: 2, name: "Maria Souza", role: "Recepcionista", email: "maria@email.com" },
+//                     { id: 3, name: "Carlos Pereira", role: "Técnico", email: "carlos@email.com" },
+//                 ]),
+//             1000
+//         )
+//     );
+// };
 
 const roles = ["Segurança", "Recepcionista", "Técnico"];
 
@@ -32,16 +33,13 @@ export function StaffList() {
     const [role, setRole] = useState("");
 
     // Busca funcionários via React Query
-    const { data: employees, isLoading } = useQuery({
-        queryKey: ["employees"],
-        queryFn: fetchEmployees,
-    });
+    const { data: staffs, isLoading } = useStaffs()
 
     // Filtragem dos funcionários por nome e função
-    const filteredEmployees = employees?.filter(
-        (employee) =>
-            employee.name.toLowerCase().includes(search.toLowerCase()) &&
-            (role ? employee.role === role : true)
+    const filteredStaff = staffs?.filter(
+        (staff) =>
+            staff.name.toLowerCase().includes(search.toLowerCase()) &&
+            (role ? staff.role === role : true)
     );
 
     const handleDelete = (id: number) => {
@@ -97,12 +95,12 @@ export function StaffList() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredEmployees?.length > 0 ? (
-                                    filteredEmployees.map((employee) => (
-                                        <TableRow key={employee.id}>
-                                            <TableCell>{employee.name}</TableCell>
-                                            <TableCell>{employee.role}</TableCell>
-                                            <TableCell>{employee.email}</TableCell>
+                                {filteredStaff?.length > 0 ? (
+                                    filteredStaff.map((staff) => (
+                                        <TableRow key={staff.id}>
+                                            <TableCell>{staff.name}</TableCell>
+                                            <TableCell>{staff.role}</TableCell>
+                                            <TableCell>{staff.email}</TableCell>
                                             <TableCell className="text-right space-x-2">
                                                 <Button size="sm" variant="outline">
                                                     <Pencil className="w-4 h-4" /> Editar
@@ -110,7 +108,7 @@ export function StaffList() {
                                                 <Button
                                                     size="sm"
                                                     variant="destructive"
-                                                    onClick={() => handleDelete(employee.id)}
+                                                    onClick={() => handleDelete(staff.id)}
                                                 >
                                                     <Trash className="w-4 h-4" /> Excluir
                                                 </Button>
