@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useEventDetails } from "@/services/owner/queries";
+import { eventStore } from "@/store/eventStore";
 
 // Schema de validação com Zod
 const eventSchema = z.object({
@@ -22,6 +24,8 @@ const eventSchema = z.object({
 type EventFormData = z.infer<typeof eventSchema>;
 
 export function EventDetail() {
+    const { selectedEvent } = eventStore()
+    const { data: eventDetails } = useEventDetails(selectedEvent)
     const {
         register,
         handleSubmit,
@@ -30,29 +34,37 @@ export function EventDetail() {
     } = useForm<EventFormData>({
         resolver: zodResolver(eventSchema),
     });
-
-    // Simulação de fetch dos dados do evento
     useEffect(() => {
-        const fetchEvent = async () => {
-            // Simulação de dados vindos da API
-            const eventData = {
-                name: "Tech Conference 2024",
-                date: "2025-06-15",
-                location: "Centro de Convenções SP",
-                description: "Um evento sobre tecnologia e inovação.",
-                image: "https://via.placeholder.com/600x300",
-            };
+        if (eventDetails) {
+            setValue("name", eventDetails.name);
+            setValue("date", eventDetails.date);
+            setValue("location", eventDetails.location);
+            setValue("description", eventDetails.description);
+            setValue("image", eventDetails.image);
+        }
+    }, [eventDetails, setValue]);
 
-            // Preenchendo os campos do formulário
-            setValue("name", eventData.name);
-            setValue("date", eventData.date);
-            setValue("location", eventData.location);
-            setValue("description", eventData.description);
-            setValue("image", eventData.image);
-        };
+    // useEffect(() => {
+    //     const fetchEvent = async () => {
+    //         // Simulação de dados vindos da API
+    //         const eventData = {
+    //             name: "Tech Conference 2024",
+    //             date: "2025-06-15",
+    //             location: "Centro de Convenções SP",
+    //             description: "Um evento sobre tecnologia e inovação.",
+    //             image: "https://via.placeholder.com/600x300",
+    //         };
 
-        fetchEvent();
-    }, [setValue]);
+    //         // Preenchendo os campos do formulário
+    //         setValue("name", eventData.name);
+    //         setValue("date", eventData.date);
+    //         setValue("location", eventData.location);
+    //         setValue("description", eventData.description);
+    //         setValue("image", eventData.image);
+    //     };
+
+    //     fetchEvent();
+    // }, [setValue]);
 
     // Simulação de envio para API
     const mutation = useMutation({

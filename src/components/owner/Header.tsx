@@ -4,17 +4,17 @@ import { useEvents } from "@/services/owner/queries";
 import { userStore } from "@/store/userStore";
 import { eventStore } from "@/store/eventStore";
 import { api } from "@/lib/axios";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Header: FC = () => {
     const { selectedEvent, setSelectedEvent } = eventStore()
     const user = userStore((state) => state.user)
-    const { data: events, isLoading } = useEvents()
+    const { data: events, isLoading, refetch } = useEvents()
 
     const handleEventChange = async (eventId: string) => {
         if (eventId === selectedEvent) return
         await api.post('/api/dashboard/select-event', { event_id: eventId })
         setSelectedEvent(eventId);
+        await refetch()
         console.log(`Evento selecionado: ${eventId}`);
     };
 
@@ -44,11 +44,6 @@ export const Header: FC = () => {
                         </SelectContent>
                     </Select>
                 )}
-                {/* User Avatar */}
-                {/* <Avatar>
-                    <AvatarImage src="https://placehold.co/150" alt="User" />
-                    <AvatarFallback>J</AvatarFallback>
-                </Avatar> */}
             </div>
         </header>
     )
